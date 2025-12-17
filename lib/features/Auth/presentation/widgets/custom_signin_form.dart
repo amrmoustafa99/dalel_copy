@@ -1,4 +1,5 @@
 import 'package:dalel_project/core/utils/colors_app.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,9 +7,10 @@ import '../../../../../core/functions/custom_toast_message.dart';
 import '../../../../../core/functions/navigator.dart';
 import '../../../../../core/utils/strings_app.dart';
 import '../../../../../core/widgets/custom_btn.dart';
-import '../../signup_cubit/auth_cubit.dart';
-import '../../signup_cubit/auth_state.dart';
+import '../signup_cubit/auth_cubit.dart';
+import '../signup_cubit/auth_state.dart';
 import 'custom_text_field.dart';
+import 'forgot_password_text_widget.dart';
 
 class CustomSignInForm extends StatelessWidget {
   const CustomSignInForm({super.key});
@@ -17,8 +19,12 @@ class CustomSignInForm extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is SigninSuccessState) {
-          customToastMessage(context: context, msg: "Welcome backe");
-          customReplacementNavigator(context, "/home");
+          FirebaseAuth.instance.currentUser!.emailVerified
+              ? customReplacementNavigator(context, "/home")
+              : customToastMessage(
+                  context: context,
+                  msg: "please verify your email",
+                );
         } else if (state is SigninFailureState) {
           customToastMessage(context: context, msg: state.errMessage);
         }
@@ -53,7 +59,7 @@ class CustomSignInForm extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
-              // const ForgotPasswordTextWidget(),
+              const ForgotPasswordTextWidget(),
               const SizedBox(height: 102),
               state is SigninLoadingState
                   ? CircularProgressIndicator(color: ColorsApp.primaryColor)

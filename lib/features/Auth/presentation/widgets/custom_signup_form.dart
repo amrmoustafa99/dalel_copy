@@ -3,12 +3,12 @@ import 'package:dalel_project/core/functions/navigator.dart';
 import 'package:dalel_project/core/utils/colors_app.dart';
 import 'package:dalel_project/core/utils/strings_app.dart';
 import 'package:dalel_project/core/widgets/custom_btn.dart';
-import 'package:dalel_project/features/Auth/signUp/presentation/widgets/terms_and_condition_widget.dart';
-import 'package:dalel_project/features/Auth/signUp/signup_cubit/auth_cubit.dart';
-import 'package:dalel_project/features/Auth/signUp/signup_cubit/auth_state.dart';
+import 'package:dalel_project/features/Auth/presentation/widgets/terms_and_condition_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../signup_cubit/auth_cubit.dart';
+import '../signup_cubit/auth_state.dart';
 import 'custom_text_field.dart';
 
 class CustomSignUpForm extends StatelessWidget {
@@ -19,8 +19,11 @@ class CustomSignUpForm extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthSuccessState) {
-          customToastMessage(context: context, msg: "Created Account success");
-          customReplacementNavigator(context, "/home");
+          customToastMessage(
+            context: context,
+            msg: "Successfully, please check your email",
+          );
+          customReplacementNavigator(context, "/signIn");
         } else if (state is AuthFailuerState) {
           customToastMessage(context: context, msg: state.error);
         }

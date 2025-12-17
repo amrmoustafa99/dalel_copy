@@ -1,11 +1,11 @@
 import 'package:dalel_project/core/functions/navigator.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/utils/strings_app.dart';
-import '../../../signUp/presentation/widgets/custom_signin_form.dart';
-import '../../../signUp/presentation/widgets/have_an_account_widget.dart';
-import '../../../signUp/presentation/widgets/welcome_banner.dart';
-import '../../../signUp/presentation/widgets/welcome_text_widget.dart';
+import '../../../../core/utils/strings_app.dart';
+import '../widgets/custom_signin_form.dart';
+import '../widgets/have_an_account_widget.dart';
+import '../widgets/welcome_banner.dart';
+import '../widgets/welcome_text_widget.dart';
 
 class SignInView extends StatelessWidget {
   const SignInView({super.key});

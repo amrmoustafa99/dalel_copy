@@ -1,7 +1,8 @@
-import 'package:dalel_project/features/Auth/signUp/signup_cubit/auth_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthIniatlState());
@@ -14,8 +15,9 @@ class AuthCubit extends Cubit<AuthState> {
   bool? passwordVisibility = true;
   GlobalKey<FormState> SignUpKey = GlobalKey();
   GlobalKey<FormState> signinFormKey = GlobalKey();
+  GlobalKey<FormState> forgotPasswordFormKey = GlobalKey();
 
-  createUserWithEmailAndPassword() async {
+  Future<void> createUserWithEmailAndPassword() async {
     try {
       emit(AuthILoadingState());
       final credential = await FirebaseAuth.instance
@@ -23,6 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
             email: emailAdderess.toString(),
             password: password.toString(),
           );
+      await credential.user!.sendEmailVerification();
       emit(AuthSuccessState());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -33,10 +36,17 @@ class AuthCubit extends Cubit<AuthState> {
             error: "The account already exists for that email.'",
           ),
         );
+      } else if (e.code == "invalid-email") {
+        print("erroooor\n");
+        print(e.code.toString());
       }
     } catch (e) {
       emit(AuthFailuerState(error: e.toString()));
     }
+  }
+
+  Future<void> verfiyEamil() async {
+    await FirebaseAuth.instance.currentUser!.sendEmailVerification();
   }
 
   void updateTermsAndConditiona({required value}) {
@@ -50,7 +60,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthChangeVisibilityState());
   }
 
-  sigInWithEmailAndPassword() async {
+  Future<void> sigInWithEmailAndPassword() async {
     try {
       emit(SigninLoadingState());
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -70,6 +80,16 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } catch (e) {
       emit(SigninFailureState(errMessage: e.toString()));
+    }
+  }
+
+  Future<void> resetPasswordWithLink() async {
+    try {
+      emit(ResetPasswordLoadingState());
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailAdderess!);
+      emit(ResetPasswordSuccessState());
+    } catch (e) {
+      emit(ResetPasswordFailureState(errMessage: e.toString()));
     }
   }
 }
